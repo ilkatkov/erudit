@@ -5,25 +5,23 @@ Adafruit_PCD8544 display = Adafruit_PCD8544(7, 6, 5, 4, 3); //CLK, DIN, DC, CE, 
 
 
 // генерируются 2 случайных числа от 0 до 99, генерируется математический оператор, и два возможных ответа
-void getQuestion(int points){
+void getQuestion(){
 
   double temp_num;
   double ans1;
   double ans2;
 
-  int steps = 0;
   display.clearDisplay();
   display.print("Сколько будет ");
-  int rand_num1 = random(-90+steps%10, points%100);
-  int rand_num2 = random(-90+points%10, points%100);
+  int rand_num1 = random(-99, 100);
+  int rand_num2 = random(-99, 100);
   while (rand_num1 == rand_num2){
-    steps = steps +1;
     Serial.print("Были одинаковые числа в вопросе:");
     Serial.print(rand_num1);
     Serial.print(" и ");
     Serial.println(rand_num2);
-    int rand_num1 = random(-90+steps%10, points%100);
-    int rand_num2 = random(-90+points%10, points%100);
+  int rand_num1 = random(-99, 100);
+  int rand_num2 = random(-99, 100);
   }
   display.print(rand_num1);
 
@@ -50,21 +48,19 @@ void getQuestion(int points){
   int rand_right = random(0,2);
   if (rand_right == 0){
     ans1 = temp_num;
-    ans2 = temp_num-random(10-random(steps%10));
+    ans2 = temp_num-random(10);
     while (ans1 == ans2){
-      steps = steps +1;
       Serial.println("Были одинаковые числа в ответах 2.");
       ans1 = temp_num;
-      ans2 = temp_num-random(10-random(steps%10));
+      ans2 = temp_num-random(10);
     }
   }
   else {
-    ans1 = temp_num-random(10-random(steps%10));
+    ans1 = temp_num-random(10);
     ans2 = temp_num;
     while (ans1 == ans2){
-      steps = steps +1;
       Serial.println("Были одинаковые числа в ответах 1.");
-      ans1 = temp_num-random(10-random(steps%10));
+      ans1 = temp_num-random(10);
       ans2 = temp_num;
     }
   }
@@ -95,17 +91,14 @@ void setup() {
 
  
 void loop() {
-  int steps = 0;
   while ((digitalRead(9) == 1) and (digitalRead(10) == 1)){
     if (digitalRead(9) == 0){
     Serial.println("Нажата левая кнопка");
     } else if (digitalRead(10) == 0){
     Serial.println("Нажата правая кнопка");
     }
-  steps = steps+1;
   }
   delay(200);
 randomSeed(analogRead(0));
-Serial.println(12/4.5);
-  getQuestion(steps);
+  getQuestion();
 }
