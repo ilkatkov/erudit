@@ -38,6 +38,7 @@ void getQuestion(){
     temp_num = rand_num1*rand_num2;
   } else if (rand_operator == 3){
     display.print(" / ");
+    
     temp_num = rand_num1/rand_num2;
   }
 
