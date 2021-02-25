@@ -129,7 +129,7 @@ void setup() {
   display.begin();
   Serial.println("Game started!");
   display.clearDisplay();
-  display.setContrast(80);
+  display.setContrast(60);
   display.setCursor(0, 0); 
   display.setTextSize(2); 
   display.println("ЭРУДИТ");
@@ -145,8 +145,11 @@ void setup() {
 void loop() {
   if (lives == 0){
     display.clearDisplay();
-    display.setTextSize(1); 
+    display.setTextSize(1);
+    display.println();
     display.println("Вы проиграли!");
+    display.print("Ваш счет:");
+    display.println(score);
     display.println();
     display.println("Перезапуск...");
     display.display();
