@@ -1,12 +1,15 @@
+// ERUDIT
+// by Ilya Katkov
+// v 1.0.0
 
 #include <Adafruit_GFX_rus.h>
 #include <Adafruit_PCD8544_rus.h>
 Adafruit_PCD8544 display = Adafruit_PCD8544(7, 6, 5, 4, 3); //CLK, DIN, DC, CE, RST
 
 int score = 0;
-// генерируются вопрос, 2 случайных числа от -99 до 99, генерируется математический оператор, и два возможных ответа
-void getQuestion(){
+int lives = 3;
 
+void getQuestion(){
   float temp_num;
   float ans1;
   float ans2;
@@ -17,17 +20,12 @@ void getQuestion(){
   float rand_num1 = random(-99, 100);
   float rand_num2 = random(-99, 100);
   while (rand_num1 == rand_num2){
-//    Serial.print("Были одинаковые числа в вопросе:");
-//    Serial.print(rand_num1);
-//    Serial.print(" и ");
-//    Serial.println(rand_num2);
-  float rand_num1 = random(-99, 100);
-  float rand_num2 = random(-99, 100);
+    float rand_num1 = random(-99, 100);
+    float rand_num2 = random(-99, 100);
   }
   Serial.print((int)rand_num1);
   display.print((int)rand_num1);
 
-// рандом выражения
   int rand_operator = random(4);
   if (rand_operator == 0){
     display.print(" + ");
@@ -64,36 +62,36 @@ void getQuestion(){
     ans1 = temp_num;
     ans2 = temp_num-random(10);
     while (ans1 == ans2){
-//      Serial.println("Были одинаковые числа в ответах 2.");
       ans1 = temp_num;
       ans2 = temp_num-random(10);
     }
-      Serial.print("Правильный ответ: ");
-  Serial.print(ans1);
+    Serial.print("Правильный ответ: ");
+    Serial.print(ans1);
     Serial.print(" (");
-  Serial.print(rand_right+1);
+    Serial.print(rand_right+1);
     Serial.println(")");
   }
   else if (rand_right == 1){
     ans1 = temp_num-random(10);
     ans2 = temp_num;
     while (ans1 == ans2){
-//      Serial.println("Были одинаковые числа в ответах 1.");
       ans1 = temp_num-random(10);
       ans2 = temp_num;
     }
-          Serial.print("Правильный ответ: ");
-  Serial.print(ans2);
+    Serial.print("Правильный ответ: ");
+    Serial.print(ans2);
     Serial.print(" (");
-  Serial.print(rand_right+1);
+    Serial.print(rand_right+1);
     Serial.println(")");
   }
-  display.print("1 - ");
+  display.print("1) ");
   display.println(ans1);
-  display.print("2 - ");
+  display.print("2) ");
   display.println(ans2);
   display.print("Счет:");
-  display.println(score);
+  display.print(score);
+  display.print(" Жизни:");
+  display.print(lives);
   display.display();
 
   bool finish = true;
@@ -102,26 +100,29 @@ void getQuestion(){
       Serial.println("Выбран правильный вариант 1");
       score++;
       finish  = false;
-      }
+    }
     else if (digitalRead(9) == 0 and rand_right == 1){
       Serial.println("Выбран правильный вариант 2");
       score++;
       finish  = false;
-    } else if (digitalRead(10) == 0 and rand_right == 1){
+    } 
+    else if (digitalRead(10) == 0 and rand_right == 1){
       Serial.println("Ответ неверный!");
+      lives--;
       finish  = false;
     }
     else if (digitalRead(9) == 0 and rand_right == 0){
       Serial.println("Ответ неверный!");
+      lives--;
       finish  = false;
     }
   }  
-      delay(1000);
-      return;
+    delay(1000);
+    return;
 }
 
 void setup() {
-    randomSeed(analogRead(micros()));
+  randomSeed(analogRead(micros()));
   Serial.begin(9600);
   pinMode(9, INPUT_PULLUP);
   pinMode(10, INPUT_PULLUP);
@@ -142,6 +143,17 @@ void setup() {
 
  
 void loop() {
-  
-  getQuestion();
+  if (lives == 0){
+    display.clearDisplay();
+    display.setTextSize(1); 
+    display.println("Вы проиграли!");
+    display.println();
+    display.println("Перезапуск...");
+    display.display();
+    delay(2000);
+    lives = 3;
+  }
+  else {
+    getQuestion();
+  }
 }
